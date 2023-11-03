@@ -29,6 +29,7 @@ const (
 	httpListenAddressKey            = "http_listen_address"
 	websocketHostOverrideKey        = "websocket_host_override"
 	rtmpPortNumberKey               = "rtmp_port_number"
+	webrtcPortNumberKey             = "webrtc_port_number"
 	serverMetadataTagsKey           = "server_metadata_tags"
 	directoryEnabledKey             = "directory_enabled"
 	directoryRegistrationKeyKey     = "directory_registration_key"
@@ -279,6 +280,26 @@ func GetRTMPPortNumber() int {
 // SetRTMPPortNumber will set the server RTMP port.
 func SetRTMPPortNumber(port float64) error {
 	return _datastore.SetNumber(rtmpPortNumberKey, port)
+}
+
+// GetWebRTCPortNumber will return the server WebRTC port.
+func GetWebRTCPortNumber() int {
+	port, err := _datastore.GetNumber(webrtcPortNumberKey)
+	if err != nil {
+		log.Traceln(webrtcPortNumberKey, err)
+		return config.GetDefaults().WebRTCServerPort
+	}
+
+	if port == 0 {
+		return config.GetDefaults().WebRTCServerPort
+	}
+
+	return int(port)
+}
+
+// SetWebRTCPortNumber will set the server WebRTC port.
+func SetWebRTCPortNumber(port float64) error {
+	return _datastore.SetNumber(webrtcPortNumberKey, port)
 }
 
 // GetServerMetadataTags will return the metadata tags.

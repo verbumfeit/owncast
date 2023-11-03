@@ -7,6 +7,7 @@ import { AlertMessageContext } from '../../utils/alert-message-context';
 import {
   TEXTFIELD_PROPS_FFMPEG,
   TEXTFIELD_PROPS_RTMP_PORT,
+  TEXTFIELD_PROPS_WEBRTC_PORT,
   TEXTFIELD_PROPS_SOCKET_HOST_OVERRIDE,
   TEXTFIELD_PROPS_ADMIN_PASSWORD,
   TEXTFIELD_PROPS_WEB_PORT,
@@ -29,6 +30,7 @@ export default function EditInstanceDetails() {
     adminPassword,
     ffmpegPath,
     rtmpServerPort,
+    webrtcServerPort,
     webServerPort,
     yp,
     socketHostOverride,
@@ -40,6 +42,7 @@ export default function EditInstanceDetails() {
       adminPassword,
       ffmpegPath,
       rtmpServerPort,
+      webrtcServerPort,
       webServerPort,
       socketHostOverride,
       videoServingEndpoint,
@@ -110,6 +113,15 @@ export default function EditInstanceDetails() {
         {...TEXTFIELD_PROPS_RTMP_PORT}
         value={formDataValues.rtmpServerPort}
         initialValue={rtmpServerPort}
+        type={TEXTFIELD_TYPE_NUMBER}
+        onChange={handleFieldChange}
+        onSubmit={showConfigurationRestartMessage}
+      />
+      <TextFieldWithSubmit
+        fieldName="webrtcServerPort"
+        {...TEXTFIELD_PROPS_WEBRTC_PORT}
+        value={formDataValues.webrtcServerPort}
+        initialValue={webrtcServerPort}
         type={TEXTFIELD_TYPE_NUMBER}
         onChange={handleFieldChange}
         onSubmit={showConfigurationRestartMessage}

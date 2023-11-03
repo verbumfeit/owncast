@@ -5,6 +5,7 @@ import (
 	"io"
 	"time"
 
+	"github.com/pion/webrtc/v3"
 	log "github.com/sirupsen/logrus"
 
 	"github.com/owncast/owncast/activitypub"
@@ -31,8 +32,56 @@ var _onlineTimerCancelFunc context.CancelFunc
 
 var _lastNotified *time.Time
 
-// setStreamAsConnected sets the stream as connected.
-func setStreamAsConnected(rtmpOut *io.PipeReader) {
+// setWebRTCStreamAsConnected sets the stream as connected.
+func setWebRTCStreamAsConnected(webrtcOut *webrtc.PeerConnection) {
+	now := utils.NullTime{Time: time.Now(), Valid: true}
+	_stats.StreamConnected = true
+	_stats.LastDisconnectTime = nil
+	_stats.LastConnectTime = &now
+	_stats.SessionMaxViewerCount = 0
+
+	_currentBroadcast = &models.CurrentBroadcast{
+		LatencyLevel:   data.GetStreamLatencyLevel(),
+		OutputSettings: data.GetStreamOutputVariants(),
+	}
+
+	StopOfflineCleanupTimer()
+	startOnlineCleanupTimer()
+
+	if _yp != nil {
+		go _yp.Start()
+	}
+
+	// TODO: This is transcoder stuff and ffmpeg does not support WebRTC as of yet.
+	// segmentPath := config.HLSStoragePath
+
+	// if err := setupStorage(); err != nil {
+	// 	log.Fatalln("failed to setup the storage", err)
+	// }
+
+	// go func() {
+	// 	_transcoder = transcoder.NewTranscoder()
+	// 	_transcoder.TranscoderCompleted = func(error) {
+	// 		SetStreamAsDisconnected()
+	// 		_transcoder = nil
+	// 		_currentBroadcast = nil
+	// 	}
+	// 	_transcoder.SetStdin(rtmpOut)
+	// 	_transcoder.Start(true)
+	// }()
+
+	go webhooks.SendStreamStatusEvent(models.StreamStarted)
+	// transcoder.StartThumbnailGenerator(segmentPath, data.FindHighestVideoQualityIndex(_currentBroadcast.OutputSettings))
+
+	_ = chat.SendSystemAction("Stay tuned, the stream is **starting**!", true)
+	chat.SendAllWelcomeMessage()
+
+	// Send delayed notification messages.
+	_onlineTimerCancelFunc = startLiveStreamNotificationsTimer()
+}
+
+// setRTMPStreamAsConnected sets the stream as connected.
+func setRTMPStreamAsConnected(rtmpOut *io.PipeReader) {
 	now := utils.NullTime{Time: time.Now(), Valid: true}
 	_stats.StreamConnected = true
 	_stats.LastDisconnectTime = nil

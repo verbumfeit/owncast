@@ -29,6 +29,8 @@ export default function VideoEmbed() {
   const { offlineMessage } = clientConfig;
   const { viewerCount, lastConnectTime, lastDisconnectTime, streamTitle } = status;
   const online = useRecoilValue<boolean>(isOnlineSelector);
+  const videoSourceRTMP = {src:"/hls/stream.m3u8", type: "'application/x-mpegURL',"}
+  const videoSourceWebRTC = {src:"/api/whep", type: "'application/x-mpegURL',"} // TODO: What is the correct type?
 
   const router = useRouter();
 
@@ -75,7 +77,7 @@ export default function VideoEmbed() {
         `}
       </style>
       <OwncastPlayer
-        source="/hls/stream.m3u8"
+        source={videoSourceWebRTC} // TODO: Set source accordingly, WebRTC or RTMP
         online={online}
         initiallyMuted={initiallyMuted}
         title={streamTitle || name}

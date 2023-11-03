@@ -28,6 +28,7 @@ const initialServerConfigState: ConfigDetails = {
   },
   ffmpegPath: '',
   rtmpServerPort: '',
+  webrtcServerPort: '',
   webServerPort: '',
   socketHostOverride: null,
   videoServingEndpoint: '',

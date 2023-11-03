@@ -39,7 +39,7 @@ func setupStats() error {
 	return nil
 }
 
-// IsStreamConnected checks if the stream is connected or not.
+// IsStreamConnected checks if the stream is connected or not. // TODO: Check if this causes problems for WebRTC
 func IsStreamConnected() bool {
 	if !_stats.StreamConnected {
 		return false

@@ -14,6 +14,7 @@ import LatencyCompensator from '../latencyCompensator';
 import styles from './OwncastPlayer.module.scss';
 import { VideoSettingsServiceContext } from '../../../services/video-settings-service';
 import { ComponentError } from '../../ui/ComponentError/ComponentError';
+import { VideoSource } from '../../../interfaces/videojs';
 
 const PLAYER_VOLUME = 'owncast_volume';
 const LATENCY_COMPENSATION_ENABLED = 'latencyCompensatorEnabled';
@@ -24,7 +25,7 @@ let latencyCompensator = null;
 let latencyCompensatorEnabled = false;
 
 export type OwncastPlayerProps = {
-  source: string;
+  source: VideoSource;
   online: boolean;
   initiallyMuted?: boolean;
   title: string;
@@ -224,10 +225,7 @@ export const OwncastPlayer: FC<OwncastPlayerProps> = ({
       liveTolerance: 15,
     },
     sources: [
-      {
-        src: source,
-        type: 'application/x-mpegURL',
-      },
+      source,
     ],
   };
 

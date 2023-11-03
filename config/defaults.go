@@ -31,6 +31,7 @@ type Defaults struct {
 
 	Tags               []string
 	RTMPServerPort     int
+	WebRTCServerPort   int
 	SegmentsInPlaylist int
 
 	SegmentLengthSeconds int
@@ -78,9 +79,10 @@ func GetDefaults() Defaults {
 		YPEnabled: false,
 		YPServer:  "https://directory.owncast.online",
 
-		WebServerPort:  8080,
-		WebServerIP:    "0.0.0.0",
-		RTMPServerPort: 1935,
+		WebServerPort:    8080,
+		WebServerIP:      "0.0.0.0",
+		RTMPServerPort:   1935,
+		WebRTCServerPort: 8090,
 
 		ChatEstablishedUserModeTimeDuration: time.Minute * 15,
 

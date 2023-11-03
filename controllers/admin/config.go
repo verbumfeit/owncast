@@ -384,6 +384,25 @@ func SetRTMPServerPort(w http.ResponseWriter, r *http.Request) {
 	controllers.WriteSimpleResponse(w, true, "rtmp port set")
 }
 
+// SetWebRTCServerPort will handle the web config request to set the inbound WebRTC port.
+func SetWebRTCServerPort(w http.ResponseWriter, r *http.Request) {
+	if !requirePOST(w, r) {
+		return
+	}
+
+	configValue, success := getValueFromRequest(w, r)
+	if !success {
+		return
+	}
+
+	if err := data.SetWebRTCPortNumber(configValue.Value.(float64)); err != nil {
+		controllers.WriteSimpleResponse(w, false, err.Error())
+		return
+	}
+
+	controllers.WriteSimpleResponse(w, true, "webrtc port set")
+}
+
 // SetServerURL will handle the web config request to set the full server URL.
 func SetServerURL(w http.ResponseWriter, r *http.Request) {
 	if !requirePOST(w, r) {

@@ -3,9 +3,12 @@ package admin
 import (
 	"net/http"
 
+	"github.com/owncast/owncast/core/webrtcc"
+
 	"github.com/owncast/owncast/controllers"
 	"github.com/owncast/owncast/core"
 
+	// "github.com/owncast/owncast/core"
 	"github.com/owncast/owncast/core/rtmp"
 )
 
@@ -17,5 +20,6 @@ func DisconnectInboundConnection(w http.ResponseWriter, r *http.Request) {
 	}
 
 	rtmp.Disconnect()
+	webrtcc.DeleteStream()
 	controllers.WriteSimpleResponse(w, true, "inbound stream disconnected")
 }

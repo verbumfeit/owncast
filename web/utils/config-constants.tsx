@@ -27,6 +27,7 @@ const API_INSTANCE_URL = '/serverurl';
 const API_LOGO = '/logo';
 const API_NSFW_SWITCH = '/nsfw';
 const API_RTMP_PORT = '/rtmpserverport';
+const API_WEBRTC_PORT = '/webrtcserverport'
 const API_SERVER_SUMMARY = '/serversummary';
 const API_SERVER_WELCOME_MESSAGE = '/welcomemessage';
 const API_SERVER_NAME = '/name';
@@ -161,6 +162,16 @@ export const TEXTFIELD_PROPS_RTMP_PORT = {
   placeholder: '1935',
   label: 'RTMP port',
   tip: 'What port should accept inbound broadcasts? Default is 1935',
+  required: true,
+  hasComplexityRequirements: false,
+};
+export const TEXTFIELD_PROPS_WEBRTC_PORT = {
+  apiPath: API_WEBRTC_PORT,
+  configPath: '',
+  maxLength: 6,
+  placeholder: '8090',
+  label: 'WebRTC port',
+  tip: 'What port should accept inbound broadcasts? Default is 8090',
   required: true,
   hasComplexityRequirements: false,
 };

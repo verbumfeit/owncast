@@ -1,7 +1,8 @@
 package data
 
 import (
-	"github.com/owncast/owncast/config"
+	"github.com/owncast/owncast/config" // Needs to be replaced with github package
+
 	"github.com/owncast/owncast/models"
 )
 
@@ -36,6 +37,7 @@ func PopulateDefaults() {
 	_ = SetStreamKeys(defaults.StreamKeys)
 	_ = SetHTTPPortNumber(float64(defaults.WebServerPort))
 	_ = SetRTMPPortNumber(float64(defaults.RTMPServerPort))
+	_ = SetWebRTCPortNumber(float64(defaults.WebRTCServerPort))
 	_ = SetLogoPath(defaults.Logo)
 	_ = SetServerMetadataTags([]string{"owncast", "streaming"})
 	_ = SetServerSummary(defaults.Summary)

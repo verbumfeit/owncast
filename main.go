@@ -28,6 +28,7 @@ var (
 	webServerPortOverride = flag.String("webserverport", "", "Force the web server to listen on a specific port")
 	webServerIPOverride   = flag.String("webserverip", "", "Force web server to listen on this IP address")
 	rtmpPortOverride      = flag.Int("rtmpport", 0, "Set listen port for the RTMP server")
+	webrtcPortOverride    = flag.Int("webrtcport", 0, "Set listen port for the WebRTC server")
 )
 
 // nolint:cyclop
@@ -153,6 +154,14 @@ func handleCommandLineFlags() {
 	if *rtmpPortOverride > 0 {
 		log.Println("Saving new RTMP server port number to", *rtmpPortOverride)
 		if err := data.SetRTMPPortNumber(float64(*rtmpPortOverride)); err != nil {
+			log.Errorln(err)
+		}
+	}
+
+	// Set the webrtc server port
+	if *webrtcPortOverride > 0 {
+		log.Println("Saving new WebRTC server port number to", *webrtcPortOverride)
+		if err := data.SetWebRTCPortNumber(float64(*webrtcPortOverride)); err != nil {
 			log.Errorln(err)
 		}
 	}
