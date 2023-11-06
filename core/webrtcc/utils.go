@@ -13,6 +13,7 @@ import (
 	"github.com/owncast/owncast/config"
 	"github.com/owncast/owncast/core/data"
 	"github.com/owncast/owncast/models"
+	"github.com/pion/ice/v2"
 	"github.com/pion/interceptor"
 	"github.com/pion/webrtc/v3"
 	log "github.com/sirupsen/logrus"
@@ -149,13 +150,18 @@ func Configure() {
 		log.Fatal(err)
 	}
 
-	settingEngine := webrtc.SettingEngine{}
-	populateSettingEngine(&settingEngine)
+	udpMuxCache := map[int]*ice.MultiUDPMuxDefault{}
 
-	api = webrtc.NewAPI(
+	apiWhip = webrtc.NewAPI(
 		webrtc.WithMediaEngine(mediaEngine),
 		webrtc.WithInterceptorRegistry(interceptorRegistry),
-		webrtc.WithSettingEngine(settingEngine),
+		webrtc.WithSettingEngine(createSettingEngine(true, udpMuxCache)),
+	)
+
+	apiWhep = webrtc.NewAPI(
+		webrtc.WithMediaEngine(mediaEngine),
+		webrtc.WithInterceptorRegistry(interceptorRegistry),
+		webrtc.WithSettingEngine(createSettingEngine(false, udpMuxCache)),
 	)
 }
 
@@ -205,11 +211,7 @@ func addTrack(stream *stream, rid string) error {
 }
 
 func whepHandler(res http.ResponseWriter, req *http.Request) {
-	streamKey := req.Header.Get("Authorization")
-	if streamKey == "" {
-		logHTTPError(res, "Authorization was not set", http.StatusBadRequest)
-		return
-	}
+	streamKey := GetandValidateStreamKey(res, req)
 
 	offer, err := io.ReadAll(req.Body)
 	if err != nil {
@@ -291,4 +293,111 @@ func DeleteStream() {
 
 	delete(streamMap, _streamKey)
 	_streamKey = ""
+}
+
+func populateMediaEngine(m *webrtc.MediaEngine) error {
+	for _, codec := range []webrtc.RTPCodecParameters{
+		{
+			// nolint
+			RTPCodecCapability: webrtc.RTPCodecCapability{webrtc.MimeTypeOpus, 48000, 2, "minptime=10;useinbandfec=1", nil},
+			PayloadType:        111,
+		},
+	} {
+		if err := m.RegisterCodec(codec, webrtc.RTPCodecTypeAudio); err != nil {
+			return err
+		}
+	}
+
+	// nolint
+	videoRTCPFeedback := []webrtc.RTCPFeedback{{"goog-remb", ""}, {"ccm", "fir"}, {"nack", ""}, {"nack", "pli"}}
+	for _, codec := range []webrtc.RTPCodecParameters{
+		{
+			// nolint
+			RTPCodecCapability: webrtc.RTPCodecCapability{webrtc.MimeTypeH264, 90000, 0, "level-asymmetry-allowed=1;packetization-mode=1;profile-level-id=42001f", videoRTCPFeedback},
+			PayloadType:        102,
+		},
+		{
+			// nolint
+			RTPCodecCapability: webrtc.RTPCodecCapability{"video/rtx", 90000, 0, "apt=102", nil},
+			PayloadType:        121,
+		},
+
+		{
+			// nolint
+			RTPCodecCapability: webrtc.RTPCodecCapability{webrtc.MimeTypeH264, 90000, 0, "level-asymmetry-allowed=1;packetization-mode=0;profile-level-id=42001f", videoRTCPFeedback},
+			PayloadType:        127,
+		},
+		{
+			// nolint
+			RTPCodecCapability: webrtc.RTPCodecCapability{"video/rtx", 90000, 0, "apt=127", nil},
+			PayloadType:        120,
+		},
+		{
+			// nolint
+			RTPCodecCapability: webrtc.RTPCodecCapability{webrtc.MimeTypeH264, 90000, 0, "level-asymmetry-allowed=1;packetization-mode=1;profile-level-id=42e01f", videoRTCPFeedback},
+			PayloadType:        125,
+		},
+		{
+			// nolint
+			RTPCodecCapability: webrtc.RTPCodecCapability{"video/rtx", 90000, 0, "apt=125", nil},
+			PayloadType:        107,
+		},
+
+		{
+			// nolint
+			RTPCodecCapability: webrtc.RTPCodecCapability{webrtc.MimeTypeH264, 90000, 0, "level-asymmetry-allowed=1;packetization-mode=0;profile-level-id=42e01f", videoRTCPFeedback},
+			PayloadType:        108,
+		},
+		{
+			// nolint
+			RTPCodecCapability: webrtc.RTPCodecCapability{"video/rtx", 90000, 0, "apt=108", nil},
+			PayloadType:        109,
+		},
+		{
+			// nolint
+			RTPCodecCapability: webrtc.RTPCodecCapability{webrtc.MimeTypeH264, 90000, 0, "level-asymmetry-allowed=1;packetization-mode=0;profile-level-id=42001f", videoRTCPFeedback},
+			PayloadType:        127,
+		},
+		{
+			// nolint
+			RTPCodecCapability: webrtc.RTPCodecCapability{"video/rtx", 90000, 0, "apt=127", nil},
+			PayloadType:        120,
+		},
+		{
+			// nolint
+			RTPCodecCapability: webrtc.RTPCodecCapability{webrtc.MimeTypeH264, 90000, 0, "level-asymmetry-allowed=1;packetization-mode=1;profile-level-id=640032", videoRTCPFeedback},
+			PayloadType:        123,
+		},
+		{
+			// nolint
+			RTPCodecCapability: webrtc.RTPCodecCapability{"video/rtx", 90000, 0, "apt=123", nil},
+			PayloadType:        118,
+		},
+		{
+			// nolint
+			RTPCodecCapability: webrtc.RTPCodecCapability{webrtc.MimeTypeAV1, 90000, 0, "", videoRTCPFeedback},
+			PayloadType:        124,
+		},
+		{
+			// nolint
+			RTPCodecCapability: webrtc.RTPCodecCapability{"video/rtx", 90000, 0, "apt=124", nil},
+			PayloadType:        125,
+		},
+	} {
+		if err := m.RegisterCodec(codec, webrtc.RTPCodecTypeVideo); err != nil {
+			return err
+		}
+	}
+
+	for _, extension := range []string{
+		"urn:ietf:params:rtp-hdrext:sdes:mid",
+		"urn:ietf:params:rtp-hdrext:sdes:rtp-stream-id",
+		"urn:ietf:params:rtp-hdrext:sdes:repaired-rtp-stream-id",
+	} {
+		if err := m.RegisterHeaderExtension(webrtc.RTPHeaderExtensionCapability{URI: extension}, webrtc.RTPCodecTypeVideo); err != nil {
+			return err
+		}
+	}
+
+	return nil
 }

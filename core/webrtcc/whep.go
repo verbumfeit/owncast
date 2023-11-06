@@ -66,12 +66,9 @@ func WHEP(offer, streamKey string) (string, string, error) {
 
 	whepSessionId := uuid.New().String()
 
-	videoTrack, err := webrtc.NewTrackLocalStaticRTP(webrtc.RTPCodecCapability{MimeType: webrtc.MimeTypeH264}, "video", "pion")
-	if err != nil {
-		return "", "", err
-	}
+	videoTrack := &trackMultiCodec{id: "video", streamID: "pion"}
 
-	peerConnection, err := api.NewPeerConnection(webrtc.Configuration{})
+	peerConnection, err := apiWhep.NewPeerConnection(webrtc.Configuration{})
 	if err != nil {
 		return "", "", err
 	}
@@ -144,7 +141,7 @@ func WHEP(offer, streamKey string) (string, string, error) {
 	return peerConnection.LocalDescription().SDP, whepSessionId, nil
 }
 
-func (w *whepSession) sendVideoPacket(rtpPkt *rtp.Packet, layer string, timeDiff uint32) {
+func (w *whepSession) sendVideoPacket(rtpPkt *rtp.Packet, layer string, timeDiff uint32, isAV1 bool) {
 	if w.currentLayer.Load() == "" {
 		w.currentLayer.Store(layer)
 	} else if layer != w.currentLayer.Load() {
@@ -157,7 +154,7 @@ func (w *whepSession) sendVideoPacket(rtpPkt *rtp.Packet, layer string, timeDiff
 	rtpPkt.SequenceNumber = w.sequenceNumber
 	rtpPkt.Timestamp = w.timestamp
 
-	if err := w.videoTrack.WriteRTP(rtpPkt); err != nil && !errors.Is(err, io.ErrClosedPipe) {
+	if err := w.videoTrack.WriteRTP(rtpPkt, isAV1); err != nil && !errors.Is(err, io.ErrClosedPipe) {
 		log.Println(err)
 	}
 }

@@ -9,7 +9,7 @@ import (
 
 type (
 	whepSession struct {
-		videoTrack     *webrtc.TrackLocalStaticRTP
+		videoTrack     *trackMultiCodec
 		currentLayer   atomic.Value
 		sequenceNumber uint16
 		timestamp      uint32
