@@ -185,8 +185,12 @@ func WHIP(offer, streamKey string) (string, error) {
 
 func GetandValidateStreamKey(response http.ResponseWriter, request *http.Request) string {
 		// Get streaming key from HTTP request header
+		streamKey := ""
 		authHeader := request.Header.Get("Authorization")
-		streamKey := strings.Split(authHeader, "Bearer ")[1]
+		if strings.HasPrefix(authHeader, "Bearer ") {
+			streamKey = strings.Split(authHeader, "Bearer ")[1]
+		}
+		
 	
 		if streamKey == "" {
 			log.Error("Authorization was not set")
@@ -200,11 +204,13 @@ func GetandValidateStreamKey(response http.ResponseWriter, request *http.Request
 			logHTTPError(response, "Authorization was not set", http.StatusBadRequest)
 		}
 		return streamKey
-	
 }
 
 func whipHandler(res http.ResponseWriter, r *http.Request) {
 	streamKey := GetandValidateStreamKey(res, r)
+	if streamKey == "" {
+		return
+	}
 	// Handle DELETE requests (OBS sends one when you stop streaming)
 	if r.Method == "DELETE" {
 		Disconnect()
