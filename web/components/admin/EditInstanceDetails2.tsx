@@ -12,9 +12,12 @@ import {
   TEXTFIELD_PROPS_ADMIN_PASSWORD,
   TEXTFIELD_PROPS_WEB_PORT,
   TEXTFIELD_PROPS_VIDEO_SERVING_ENDPOINT,
+  TEXTFIELD_PROPS_WEBRTC_UDP_MUX_PORT,
+  TOGGLE_SWITCH_PROPS_SERVER_STREAM_MODE,
 } from '../../utils/config-constants';
 import { UpdateArgs } from '../../types/config-section';
 import { ResetYP } from './ResetYP';
+import { ToggleSwitch } from './ToggleSwitch';
 
 const { Panel } = Collapse;
 
@@ -31,7 +34,9 @@ export default function EditInstanceDetails() {
     ffmpegPath,
     rtmpServerPort,
     webrtcServerPort,
+    webrtcUdpMuxPort,
     webServerPort,
+    streamMode,
     yp,
     socketHostOverride,
     videoServingEndpoint,
@@ -43,7 +48,9 @@ export default function EditInstanceDetails() {
       ffmpegPath,
       rtmpServerPort,
       webrtcServerPort,
+      webrtcUdpMuxPort,
       webServerPort,
+      streamMode,
       socketHostOverride,
       videoServingEndpoint,
     });
@@ -108,6 +115,12 @@ export default function EditInstanceDetails() {
         onChange={handleFieldChange}
         onSubmit={showConfigurationRestartMessage}
       />
+      <ToggleSwitch
+            fieldName="enabled"
+            {...TOGGLE_SWITCH_PROPS_SERVER_STREAM_MODE}
+            checked={formDataValues.streamMode}
+            useSubmit={true}
+          />
       <TextFieldWithSubmit
         fieldName="rtmpServerPort"
         {...TEXTFIELD_PROPS_RTMP_PORT}
@@ -122,6 +135,15 @@ export default function EditInstanceDetails() {
         {...TEXTFIELD_PROPS_WEBRTC_PORT}
         value={formDataValues.webrtcServerPort}
         initialValue={webrtcServerPort}
+        type={TEXTFIELD_TYPE_NUMBER}
+        onChange={handleFieldChange}
+        onSubmit={showConfigurationRestartMessage}
+      />
+      <TextFieldWithSubmit
+        fieldName="webrtcUdpMuxPort"
+        {...TEXTFIELD_PROPS_WEBRTC_UDP_MUX_PORT}
+        value={formDataValues.webrtcUdpMuxPort}
+        initialValue={webrtcUdpMuxPort}
         type={TEXTFIELD_TYPE_NUMBER}
         onChange={handleFieldChange}
         onSubmit={showConfigurationRestartMessage}

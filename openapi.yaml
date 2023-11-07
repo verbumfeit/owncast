@@ -1272,6 +1272,60 @@ paths:
             example:
               value: 1935
 
+  /api/admin/config/webrtcserverport:
+    post:
+      summary: Set the inbound webrtc server port.
+      description: Set the port where owncast service will listen for inbound broadcasts.
+      tags: ['Admin']
+      security:
+        - AdminBasicAuth: []
+      responses:
+        '200':
+          $ref: '#/components/responses/BasicResponse'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConfigValue'
+            example:
+              value: 8090
+
+  /api/admin/config/webrtcudpmuxport:
+    post:
+      summary: Set the  webrtc udp mux port.
+      description: Set the port where owncast service will use for udp mux.
+      tags: ['Admin']
+      security:
+        - AdminBasicAuth: []
+      responses:
+        '200':
+          $ref: '#/components/responses/BasicResponse'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConfigValue'
+            example:
+              value: 50137
+
+  /api/admin/config/streammode:
+    post:
+      summary: Set the stream mode to webrtc.
+      description: Set the mode the owncast service will use for incoming transmissions (WebRTC/RTMP).
+      tags: ['Admin']
+      security:
+        - AdminBasicAuth: []
+      responses:
+        '200':
+          $ref: '#/components/responses/BasicResponse'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConfigValue'
+            example:
+              value: false
+
   /api/admin/config/nsfw:
     post:
       summary: Mark if your stream is not safe for work

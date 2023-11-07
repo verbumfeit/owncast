@@ -5,7 +5,7 @@ import (
 	"path"
 	"path/filepath"
 
-	"github.com/owncast/owncast/core/webrtcc" // TODO: here we should reference the github package
+	"github.com/owncast/owncast/core/webrtcc"
 
 	log "github.com/sirupsen/logrus"
 
@@ -74,16 +74,21 @@ func Start() error {
 		log.Errorln(err)
 	}
 
-	// start the rtmp server
-	go rtmp.Start(setRTMPStreamAsConnected, setBroadcaster)
+
+	if (data.GetStreamMode()) {
+		// start the webrtc server
+		go webrtcc.Start(setWebRTCStreamAsConnected, setBroadcaster)
+	}
+	if (!data.GetStreamMode()) {
+		// start the rtmp server
+		go rtmp.Start(setRTMPStreamAsConnected, setBroadcaster)
+	}
 
 	rtmpPort := data.GetRTMPPortNumber()
 	if rtmpPort != 1935 {
 		log.Infof("RTMP is accepting inbound streams on port %d.", rtmpPort)
 	}
 
-	// start the webrtc server
-	go webrtcc.Start(setWebRTCStreamAsConnected, setBroadcaster)
 
 	webrtcPort := data.GetWebRTCPortNumber()
 	if webrtcPort != 8090 {

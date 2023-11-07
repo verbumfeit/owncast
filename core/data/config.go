@@ -30,6 +30,8 @@ const (
 	websocketHostOverrideKey        = "websocket_host_override"
 	rtmpPortNumberKey               = "rtmp_port_number"
 	webrtcPortNumberKey             = "webrtc_port_number"
+	webrtcUdpMuxPortNumberKey       = "webrtc_udp_mux_port_number"
+	streamModeKey					= "stream_mode"
 	serverMetadataTagsKey           = "server_metadata_tags"
 	directoryEnabledKey             = "directory_enabled"
 	directoryRegistrationKeyKey     = "directory_registration_key"
@@ -300,6 +302,37 @@ func GetWebRTCPortNumber() int {
 // SetWebRTCPortNumber will set the server WebRTC port.
 func SetWebRTCPortNumber(port float64) error {
 	return _datastore.SetNumber(webrtcPortNumberKey, port)
+}
+
+// GetWebRTCUDPMuxPortNumber will return the WebRTC UDP Mux port.
+func GetWebRTCUDPMuxPortNumber() int {
+	port, err := _datastore.GetNumber(webrtcUdpMuxPortNumberKey)
+	if err != nil {
+		log.Traceln(webrtcUdpMuxPortNumberKey, err)
+		return config.GetDefaults().WebRTCUDPMuxPort
+	}
+
+	if port == 0 {
+		return config.GetDefaults().WebRTCUDPMuxPort
+	}
+
+	return int(port)
+}
+
+// SetWebRTCUDPMuxPortNumber will get the WebRTC UDP Mux port.
+func SetWebRTCUDPMuxPortNumber(port float64) error {
+	return _datastore.SetNumber(webrtcUdpMuxPortNumberKey, port)
+}
+
+// GetStreamMode will get the stream mode (RTMP/WebRTC).
+func GetStreamMode() bool {
+	streamMode, _ := _datastore.GetBool(streamModeKey)
+	return streamMode
+}
+
+// SetStreamMode will set the stream mode (RTMP/WebRTC).
+func SetStreamMode(mode bool) error {
+	return _datastore.SetBool(streamModeKey, mode)
 }
 
 // GetServerMetadataTags will return the metadata tags.

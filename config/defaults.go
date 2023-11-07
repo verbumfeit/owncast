@@ -32,6 +32,8 @@ type Defaults struct {
 	Tags               []string
 	RTMPServerPort     int
 	WebRTCServerPort   int
+	WebRTCUDPMuxPort   int
+	StreamMode		   bool
 	SegmentsInPlaylist int
 
 	SegmentLengthSeconds int
@@ -83,6 +85,8 @@ func GetDefaults() Defaults {
 		WebServerIP:      "0.0.0.0",
 		RTMPServerPort:   1935,
 		WebRTCServerPort: 8090,
+		WebRTCUDPMuxPort: 50137,
+		StreamMode: 	  false,
 
 		ChatEstablishedUserModeTimeDuration: time.Minute * 15,
 

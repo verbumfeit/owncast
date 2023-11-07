@@ -3,7 +3,7 @@ package controllers
 import (
 	"net/http"
 
-	"github.com/owncast/owncast/core/webrtcc" // TODO: This needs to be replaced with github package
+	"github.com/owncast/owncast/core/webrtcc"
 
 	"github.com/owncast/owncast/core/rtmp"
 )

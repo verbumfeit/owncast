@@ -28,6 +28,8 @@ const API_LOGO = '/logo';
 const API_NSFW_SWITCH = '/nsfw';
 const API_RTMP_PORT = '/rtmpserverport';
 const API_WEBRTC_PORT = '/webrtcserverport'
+const API_WEBRTC_UDP_MUX_PORT = '/webrtcudpmuxport';
+const API_SERVER_STREAM_MODE_SWITCH = '/streammode';
 const API_SERVER_SUMMARY = '/serversummary';
 const API_SERVER_WELCOME_MESSAGE = '/welcomemessage';
 const API_SERVER_NAME = '/name';
@@ -174,6 +176,22 @@ export const TEXTFIELD_PROPS_WEBRTC_PORT = {
   tip: 'What port should accept inbound broadcasts? Default is 8090',
   required: true,
   hasComplexityRequirements: false,
+};
+export const TEXTFIELD_PROPS_WEBRTC_UDP_MUX_PORT = {
+  apiPath: API_WEBRTC_UDP_MUX_PORT,
+  configPath: '',
+  maxLength: 6,
+  placeholder: '50137',
+  label: 'WebRTC UDP Mux port',
+  tip: 'What port should be used for UDP Muxing?',
+  required: true,
+  hasComplexityRequirements: false,
+};
+export const TOGGLE_SWITCH_PROPS_SERVER_STREAM_MODE = {
+  apiPath: API_SERVER_STREAM_MODE_SWITCH,
+  configPath: '',
+  label: 'WebRTC Stream Mode?',
+  tip: "Turn this ON if you want to stream via WebRTC. OFF if you want to use RTMP.",
 };
 export const TEXTFIELD_PROPS_INSTANCE_URL = {
   apiPath: API_INSTANCE_URL,

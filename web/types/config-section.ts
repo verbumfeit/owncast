@@ -137,8 +137,10 @@ export interface ConfigDetails {
   externalActions: ExternalAction[];
   ffmpegPath: string;
   instanceDetails: ConfigInstanceDetailsFields;
+  streamMode: boolean;
   rtmpServerPort: string;
   webrtcServerPort: string;
+  webrtcUdpMuxPort: string;
   s3: S3Field;
   streamKeys: StreamKey[];
   streamKeyOverridden: boolean;

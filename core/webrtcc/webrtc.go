@@ -82,8 +82,7 @@ func createSettingEngine(isWHIP bool, udpMuxCache map[int]*ice.MultiUDPMuxDefaul
 	// 	})
 	// }
 
-	// udpPort := data.GetWebRTCPortNumber()
-	udpMuxPort = 50137 // TODO: Get udpMuxPort from config
+	udpMuxPort = data.GetWebRTCUDPMuxPortNumber()
 	
 	udpMux, ok := udpMuxCache[udpMuxPort]
 	if !ok {

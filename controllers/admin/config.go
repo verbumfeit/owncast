@@ -403,6 +403,43 @@ func SetWebRTCServerPort(w http.ResponseWriter, r *http.Request) {
 	controllers.WriteSimpleResponse(w, true, "webrtc port set")
 }
 
+// SetWebRTCServerPort will handle the web config request to set the inbound WebRTC UDP Mux port.
+func SetWebRTCUDPMuxPort(w http.ResponseWriter, r *http.Request) {
+	if !requirePOST(w, r) {
+		return
+	}
+
+	configValue, success := getValueFromRequest(w, r)
+	if !success {
+		return
+	}
+
+	if err := data.SetWebRTCUDPMuxPortNumber(configValue.Value.(float64)); err != nil {
+		controllers.WriteSimpleResponse(w, false, err.Error())
+		return
+	}
+
+	controllers.WriteSimpleResponse(w, true, "webrtc udp mux port set")
+}
+
+func SetStreamMode(w http.ResponseWriter, r *http.Request) {
+	if !requirePOST(w, r) {
+		return
+	}
+
+	configValue, success := getValueFromRequest(w, r)
+	if !success {
+		return
+	}
+
+	if err := data.SetStreamMode(configValue.Value.(bool)); err != nil {
+		controllers.WriteSimpleResponse(w, false, err.Error())
+		return
+	}
+
+	controllers.WriteSimpleResponse(w, true, "stream mode set")
+}
+
 // SetServerURL will handle the web config request to set the full server URL.
 func SetServerURL(w http.ResponseWriter, r *http.Request) {
 	if !requirePOST(w, r) {

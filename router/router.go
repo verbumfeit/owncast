@@ -288,6 +288,15 @@ func Start() error {
 	// Server rtmp port
 	http.HandleFunc("/api/admin/config/rtmpserverport", middleware.RequireAdminAuth(admin.SetRTMPServerPort))
 
+	// Server webrtc port
+	http.HandleFunc("/api/admin/config/webrtcserverport", middleware.RequireAdminAuth(admin.SetWebRTCServerPort))
+	
+	// Server webrtc udp mux port
+	http.HandleFunc("/api/admin/config/webrtcudpmuxport", middleware.RequireAdminAuth(admin.SetWebRTCUDPMuxPort))
+
+	// Server stream mode
+	http.HandleFunc("/api/admin/config/streammode", middleware.RequireAdminAuth(admin.SetStreamMode))
+
 	// Websocket host override
 	http.HandleFunc("/api/admin/config/sockethostoverride", middleware.RequireAdminAuth(admin.SetSocketHostOverride))
 
