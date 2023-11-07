@@ -35,6 +35,7 @@ import { DesktopContent } from './DesktopContent';
 import { MobileContent } from './MobileContent';
 import { ChatModal } from '../../modals/ChatModal/ChatModal';
 import { Footer } from '../Footer/Footer';
+import { VideoSource } from '../../../interfaces/videojs';
 
 // Lazy loaded components
 const ChatContainer = dynamic(
@@ -219,6 +220,9 @@ export const Content: FC = () => {
 
   const showChat = isChatAvailable && !chatDisabled && chatState === ChatState.VISIBLE;
 
+  // TODO: Set the video source according to server config (RTMP or WebRTC)
+  const videoSourceWebRTC: VideoSource = {src:"http://localhost:8090/api/whep", type: "video/mp4"}
+
   return (
     <div className={styles.main}>
       <div className={styles.mainColumn}>
@@ -233,7 +237,7 @@ export const Content: FC = () => {
         <Row>
           {online && (
             <OwncastPlayer
-              source="/hls/stream.m3u8"
+              source={videoSourceWebRTC}
               online={online}
               title={streamTitle || name}
               className={styles.topSectionElement}

@@ -18,6 +18,7 @@ import { ServerStatus } from '../../../interfaces/server-status.model';
 import { AppStateOptions } from '../../../components/stores/application-state';
 import { Theme } from '../../../components/theme/Theme';
 import styles from './VideoEmbed.module.scss';
+import { VideoSource } from '../../../interfaces/videojs';
 
 export default function VideoEmbed() {
   const status = useRecoilValue<ServerStatus>(serverStatusState);
@@ -29,8 +30,9 @@ export default function VideoEmbed() {
   const { offlineMessage } = clientConfig;
   const { viewerCount, lastConnectTime, lastDisconnectTime, streamTitle } = status;
   const online = useRecoilValue<boolean>(isOnlineSelector);
-  const videoSourceRTMP = {src:"/hls/stream.m3u8", type: "'application/x-mpegURL',"}
-  const videoSourceWebRTC = {src:"/api/whep", type: "'application/x-mpegURL',"} // TODO: What is the correct type?
+  // TODO: Put these somewhere else, Content.tsx needs them too.
+  const videoSourceRTMP: VideoSource = {src:"/hls/stream.m3u8", type: "'application/x-mpegURL',"}
+  const videoSourceWebRTC: VideoSource = {src:"http://localhost:8090/api/whep", type: "'video/mp4',"}
 
   const router = useRouter();
 
