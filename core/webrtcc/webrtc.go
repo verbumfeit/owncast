@@ -146,14 +146,14 @@ func WHIP(offer, streamKey string) (string, error) {
 	})
 
 	// Handle surprising disconnect
-	// peerConnection.OnConnectionStateChange(func(i webrtc.PeerConnectionState) {
-	// 	if i == webrtc.PeerConnectionStateFailed || i == webrtc.PeerConnectionStateClosed  {
-	// 		if err := peerConnection.Close(); err != nil {
-	// 			log.Println(err)
-	// 		}
-	// 		handleDisconnect(peerConnection)
-	// 	}
-	// })
+	peerConnection.OnConnectionStateChange(func(i webrtc.PeerConnectionState) {
+		if i == webrtc.PeerConnectionStateFailed || i == webrtc.PeerConnectionStateClosed  {
+			if err := peerConnection.Close(); err != nil {
+				log.Println(err)
+			}
+			handleDisconnect(peerConnection)
+		}
+	})
 
 	if err := peerConnection.SetRemoteDescription(webrtc.SessionDescription{
 		SDP:  string(offer),
@@ -286,121 +286,7 @@ func Start(setStreamAsConnected func(*webrtc.PeerConnection), setBroadcaster fun
 	}).ListenAndServe())
 	log.Tracef("WebRTC server is listening for incoming stream on port: %d", port)
 	log.Println("Running WebRTC Server at " + fmt.Sprint(port))
-
-	// DONE! --> We are doing this above
-	// s := rtmp.NewServer()
-	// var lis net.Listener
-	// var err error
-	// if lis, err = net.Listen("tcp", fmt.Sprintf(":%d", port)); err != nil {
-	// 	log.Fatal(err)
-	// }
-
-	// TODO: We have to get the local and remote adresses from the webrtc connection
-	// s.LogEvent = func(c *rtmp.Conn, nc net.Conn, e int) {
-	// 	es := rtmp.EventString[e]
-	// 	log.Traceln("RTMP", nc.LocalAddr(), nc.RemoteAddr(), es)
-	// }
-
-	// s.HandleConn = HandleConn
-
-	// 	if err != nil {
-	// 		log.Panicln(err)
-	// 	}
-	// 	log.Tracef("RTMP server is listening for incoming stream on port: %d", port)
-
-	//	for {
-	//		nc, err := lis.Accept()
-	//		if err != nil {
-	//			time.Sleep(time.Second)
-	//			continue
-	//		}
-	//		go s.HandleNetConn(nc)
-	//	}
 }
-
-// HandleConn is fired when an inbound RTMP connection takes place.
-// func HandleConn(c *rtmp.Conn, nc net.Conn) {
-	// TODO: Log Tags (Metadata) of Stream (will probably happen in WHIP())
-	// c.LogTagEvent = func(isRead bool, t flvio.Tag) {
-	// 	if t.Type == flvio.TAG_AMF0 {
-	// 		log.Tracef("%+v\n", t.DebugFields())
-			//DONE! --> Happens in WHIP
-			//setCurrentBroadcasterInfo(t)
-	// 	}
-	// }
-	// DONE! --> Happens in WHIP()
-	// if _hasInboundWebRTCConnection {
-	// 	log.Errorln("stream already running; can not overtake an existing stream from", nc.RemoteAddr().String())
-	// 	_ = nc.Close()
-	// 	return
-	// }
-
-	// DONE! --> Happens in whipHandler()
-	// accessGranted := false
-	// validStreamingKeys := data.GetStreamKeys()
-
-	// // If a stream key override was specified then use that instead.
-	// if config.TemporaryStreamKey != "" {
-	// 	validStreamingKeys = []models.StreamKey{{Key: config.TemporaryStreamKey}}
-	// }
-
-	// for _, key := range validStreamingKeys {
-	// 	if secretMatch(key.Key, c.URL.Path) {
-	// 		accessGranted = true
-	// 		break
-	// 	}
-	// }
-
-	// if !accessGranted {
-	// 	log.Errorln("invalid streaming key; rejecting incoming stream from", nc.RemoteAddr().String())
-	// 	_ = nc.Close()
-	// 	return
-	// }
-
-	// DONE! --> A log statement in WHIP()
-	// rtmpOut, rtmpIn := io.Pipe()
-	// _pipe = rtmpIn
-	// log.Infoln("Inbound stream connected from", nc.RemoteAddr().String())
-	// _setStreamAsConnected(rtmpOut)
-
-	// // _hasInboundWebRTCConnection = true
-	// _rtmpConnection = nc
-
-	// DONE? --> I think we handle all this already
-	// w := flv.NewMuxer(rtmpIn)
-
-	// for {
-	// 	if !_hasInboundWebRTCConnection {
-	// 		break
-	// 	}
-
-	// 	// If we don't get a readable packet in 10 seconds give up and disconnect
-	// 	if err := _rtmpConnection.SetReadDeadline(time.Now().Add(10 * time.Second)); err != nil {
-	// 		log.Debugln(err)
-	// 	}
-
-	// 	pkt, err := c.ReadPacket()
-
-	// 	// Broadcaster disconnected
-	// 	if err == io.EOF {
-	// 		handleDisconnect(nc)
-	// 		return
-	// 	}
-
-	// 	// Read timeout.  Disconnect.
-	// 	if neterr, ok := err.(net.Error); ok && neterr.Timeout() {
-	// 		log.Debugln("Timeout reading the inbound stream from the broadcaster.  Assuming that they disconnected and ending the stream.")
-	// 		handleDisconnect(nc)
-	// 		return
-	// 	}
-
-	// 	if err := w.WritePacket(pkt); err != nil {
-	// 		log.Errorln("unable to write rtmp packet", err)
-	// 		handleDisconnect(nc)
-	// 		return
-	// 	}
-	// }
-// }
 
 func handleDisconnect(conn *webrtc.PeerConnection) {
 	if !_hasInboundWebRTCConnection {
